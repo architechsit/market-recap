@@ -1,8 +1,6 @@
 # market-recap
 Market Recap Script for pulling futures and previous day closings on major indices using Yahoo Finance data
 
-## Installation steps for Linux and Mac devices. (Probably Windows too)
-
 ## Create a dedicated folder
 ### Open Terminal and run:
 
