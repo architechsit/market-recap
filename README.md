@@ -5,6 +5,7 @@ Market Recap Script for pulling futures and previous day closings on major indic
 ### Open Terminal and run:
 
 mkdir ~/market-recap
+
 cd ~/market-recap
 
 ## Create a virtual environment
