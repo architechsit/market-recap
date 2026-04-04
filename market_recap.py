@@ -2,6 +2,7 @@ import yfinance as yf
 from datetime import datetime
 from tabulate import tabulate
 from colorama import Fore, Style, init
+import csv
 
 init(autoreset=True)
 
@@ -62,10 +63,46 @@ def print_table(title, symbols_dict):
     print(tabulate(table, headers=headers, tablefmt="grid"))
     print()
 
+def save_to_csv():
+    now = datetime.now()
+    timestamp = now.strftime('%Y-%m-%d_%H-%M-%S')
+    filename = f"Market_Recap_{timestamp}.csv"
+    
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        
+        writer.writerow(["Market Recap as of", now.strftime('%Y-%m-%d %H:%M:%S')])
+        writer.writerow([])
+        
+        # Market Recap section
+        writer.writerow(["Market Recap - Previous Close (as of 4pm previous day)"])
+        writer.writerow(["Index / Asset", "Price", "Change", "Symbol"])
+        for name, symbol in INDEXES.items():
+            price, change, pct = get_quote(symbol)
+            change_str = f"{change:+.2f} ({pct:+.2f}%)" if price is not None else "N/A"
+            price_str = f"{price:,.2f}" if price is not None else "N/A"
+            writer.writerow([name, price_str, change_str, symbol])
+        
+        writer.writerow([])
+        
+        # Market Outlook section
+        writer.writerow(["Market Outlook - Futures & Yields Snapshot"])
+        writer.writerow(["Index / Asset", "Price", "Change", "Symbol"])
+        for name, symbol in FUTURES_AND_YIELDS.items():
+            price, change, pct = get_quote(symbol)
+            change_str = f"{change:+.2f} ({pct:+.2f}%)" if price is not None else "N/A"
+            price_str = f"{price:,.2f}" if price is not None else "N/A"
+            writer.writerow([name, price_str, change_str, symbol])
+    
+    print(f"{Fore.GREEN}✓ Saved to: {filename}{Style.RESET_ALL}")
+
 # ====================== MAIN ======================
 if __name__ == "__main__":
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{Fore.YELLOW}Market Recap as of: {now}\n")
 
-    print_table("Market Recap – Previous Close (as of 4pm previous day)", INDEXES)
-    print_table("Market Outlook – Futures & Yields Snapshot", FUTURES_AND_YIELDS)
+    print_table("Market Recap Previous Close (as of 4pm previous day)", INDEXES)
+    print_table("Market Outlook Futures & Yields Snapshot", FUTURES_AND_YIELDS)
+    
+    save_to_csv()
+
